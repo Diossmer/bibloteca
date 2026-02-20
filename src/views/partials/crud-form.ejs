@@ -1,0 +1,42 @@
+<aside class="w-full lg:w-[320px] xl:w-[380px] shrink-0">
+    <div
+        class="sticky top-24 bg-white dark:bg-[#18181b] rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-white/5 relative overflow-hidden transition-colors">
+
+        <!-- Form Overlay Loader -->
+        <div id="formLoader"
+            class="absolute inset-0 bg-white/70 dark:bg-[#18181b]/70 backdrop-blur-sm z-20 hidden flex-col items-center justify-center">
+            <svg class="animate-spin w-6 h-6 text-indigo-500 mb-3" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+            <span class="text-[10px] uppercase font-bold tracking-widest text-indigo-500">Guardando</span>
+        </div>
+
+        <div class="flex items-center justify-between mb-6 z-10 relative">
+            <h3 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2"
+                id="formTitle">
+                Nuevo Registro
+            </h3>
+            <button id="cancelEditBtn"
+                class="hidden text-[10px] font-bold uppercase tracking-wider text-rose-500 hover:text-rose-600 dark:text-rose-400 transition-colors"
+                onclick="resetForm()">
+                Cancelar
+            </button>
+        </div>
+
+        <form id="crudForm" class="flex flex-col gap-4 z-10 relative" onsubmit="handleFormSubmit(event)">
+            <input type="hidden" id="recordId" name="_id">
+
+            <div id="dynamicFieldsContainer" class="flex flex-col gap-4">
+                <!-- Inyectado por JS -->
+            </div>
+
+            <button type="submit" id="submitBtn"
+                class="w-full mt-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-2.5 rounded-xl hover:bg-indigo-600 dark:hover:bg-indigo-500 dark:hover:text-white transition-all text-sm shadow-sm flex justify-center items-center gap-2">
+                Guardar
+            </button>
+        </form>
+    </div>
+</aside>

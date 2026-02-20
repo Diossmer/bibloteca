@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+
+    <!-- Navigation Tabs for Library Collections -->
+    <%- include('partials/tabs') %>
+
+        <!-- Split Layout: Data Catalog vs CRUD Form -->
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full relative z-10">
+
+            <!-- Catalog View -->
+            <%- include('partials/data-list') %>
+
+                <!-- Inscription Form -->
+                <%- include('partials/crud-form') %>
+
+        </div>
+
+        <%- include('partials/footer') %>

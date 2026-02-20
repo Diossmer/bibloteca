@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es" class="antialiased light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca API Explorer</title>
+    <link href="/css/app.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Toast & Highlight.js for beautiful JSON -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-slate-100 h-screen flex flex-col transition-colors duration-300 overflow-hidden">
+
+    <!-- Minimal Navbar -->
+    <nav
+        class="shrink-0 w-full bg-white/80 dark:bg-[#09090b]/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 z-50">
+        <div class="w-full px-4 sm:px-6 flex items-center justify-between h-14">
+            <div class="flex items-center gap-3">
+                <a href="/"
+                    class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 mr-2"
+                    title="Volver al Dashboard">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <div
+                    class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
+                    <svg class="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <span
+                    class="font-bold text-lg tracking-tight text-slate-900 dark:text-white flex items-baseline leading-none">
+                    API Explorer<span class="text-indigo-600 dark:text-indigo-500 text-xl leading-none">.</span>
+                </span>
+            </div>
+            <button id="themeToggleBtn"
+                class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
+                <svg id="themeToggleLightIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                <svg id="themeToggleDarkIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- App Container -->
+    <div class="flex flex-grow overflow-hidden">
+
+        <!-- Sidebar Navigation -->
+        <aside
+            class="w-80 shrink-0 bg-slate-50 dark:bg-[#09090b] border-r border-slate-200 dark:border-white/10 flex flex-col hidden md:flex">
+            <div class="px-4 py-3 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-[#18181b]">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Rutas Completas</h3>
+            </div>
+            <div class="flex-grow overflow-y-auto p-3 space-y-6" id="sidebarNav">
+                <!-- Javascript will inject links here -->
+            </div>
+        </aside>
+
+        <!-- Main Request/Response Pane -->
+        <main class="flex-grow flex flex-col bg-white dark:bg-[#18181b] overflow-hidden">
+
+            <!-- URL Request Bar -->
+            <div class="p-4 border-b border-slate-200 dark:border-white/10 shrink-0">
+                <form id="apiForm" class="flex gap-2 w-full max-w-5xl mx-auto shadow-sm">
+                    <select id="apiMethod"
+                        class="w-28 bg-slate-100 dark:bg-[#27272a] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-sm font-bold rounded-l-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer transition-colors"
+                        required>
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                    <input type="url" id="apiUrl" value="http://localhost:3000/api/libros"
+                        class="flex-grow bg-slate-50 dark:bg-[#09090b] border-y border-slate-200 dark:border-white/10 text-slate-900 dark:text-white px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:z-10 transition-colors"
+                        required>
+                    <button type="submit" id="apiSendBtn"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-r-lg text-sm transition-colors flex items-center gap-2">
+                        <span>Send</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Content Area (Split Payload / Response) -->
+            <div class="flex-grow flex flex-col lg:flex-row overflow-hidden">
+
+                <!-- Request Pane -->
+                <div class="w-full lg:w-1/2 flex flex-col border-r border-slate-200 dark:border-white/10">
+
+                    <!-- Tabs -->
+                    <div
+                        class="flex border-b border-slate-200 dark:border-white/10 px-4 pt-4 shrink-0 bg-slate-50 dark:bg-[#0f0f13]">
+                        <button type="button"
+                            class="tab-btn active px-4 py-2 text-sm font-bold text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                            data-target="headers">Headers</button>
+                        <button type="button"
+                            class="tab-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 border-b-2 border-transparent transition-colors"
+                            data-target="body">Body (JSON)</button>
+                    </div>
+
+                    <!-- Req Headers View -->
+                    <div id="tab-headers"
+                        class="tab-content flex-grow flex flex-col p-4 overflow-y-auto bg-slate-50 dark:bg-[#0f0f13]">
+                        <textarea id="apiHeaders"
+                            class="w-full flex-grow bg-white dark:bg-[#18181b] border border-slate-200 dark:border-white/10 rounded-lg p-4 font-mono text-sm text-slate-800 dark:text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none shadow-sm transition-colors"
+                            spellcheck="false">{
+  "Content-Type": "application/json"
+}</textarea>
+                    </div>
+
+                    <!-- Req Body View -->
+                    <div id="tab-body"
+                        class="tab-content hidden flex-grow flex flex-col p-4 overflow-y-auto bg-slate-50 dark:bg-[#0f0f13]">
+                        <textarea id="apiBody"
+                            class="w-full flex-grow bg-white dark:bg-[#18181b] border border-slate-200 dark:border-white/10 rounded-lg p-4 font-mono text-sm text-slate-800 dark:text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none shadow-sm transition-colors"
+                            spellcheck="false" placeholder="Enter JSON body here..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Response Pane -->
+                <div class="w-full lg:w-1/2 flex flex-col bg-slate-50 dark:bg-[#09090b]">
+                    <div
+                        class="px-4 py-3 border-b border-slate-200 dark:border-white/10 flex justify-between items-center shrink-0 bg-white dark:bg-[#18181b]">
+                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Response</span>
+                        <div class="flex items-center gap-4 text-xs font-mono">
+                            <span class="text-slate-500">Status: <span id="resStatus"
+                                    class="font-bold text-slate-900 dark:text-white">—</span></span>
+                            <span class="text-slate-500">Time: <span id="resTime"
+                                    class="font-bold text-slate-900 dark:text-white">—</span></span>
+                        </div>
+                    </div>
+                    <div class="flex-grow p-4 overflow-auto relative line-numbers">
+                        <div id="loadingOverlay"
+                            class="absolute inset-0 bg-white/50 dark:bg-[#09090b]/50 backdrop-blur-sm hidden flex items-center justify-center z-10">
+                            <svg class="animate-spin h-8 w-8 text-indigo-500" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                                    fill="none"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </div>
+                        <pre
+                            class="m-0 h-full w-full rounded-lg shadow-inner overflow-hidden border border-slate-200 dark:border-white/5"><code id="resBody" class="language-json h-full overflow-auto block p-4 bg-white dark:bg-[#18181b] text-sm font-mono" style="font-family: 'Fira Code', monospace;">{
+  "message": "Hit 'Send' to get a response"
+}</code></pre>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Init Themes
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const lightIcon = document.getElementById('themeToggleLightIcon');
+        const darkIcon = document.getElementById('themeToggleDarkIcon');
+
+        const updateIcons = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+            } else {
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            }
+        };
+
+        updateIcons();
+        themeBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateIcons();
+        });
+
+        // UI Tabs (Req Panels)
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.target.dataset.target;
+
+                // Reset classes
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.className = 'tab-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 border-b-2 border-transparent transition-colors';
+                });
+                // Set Active
+                e.target.className = 'tab-btn active px-4 py-2 text-sm font-bold text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400';
+
+                // Show panels
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(`tab-${target}`).classList.remove('hidden');
+            });
+        });
+
+        // Config models
+        const models = ['libros', 'autores', 'categorias', 'prestamos', 'usuarios'];
+        const methods = [
+            { method: 'GET', label: 'GET', color: 'text-emerald-500', isCollection: true },
+            { method: 'GET', label: 'GET', color: 'text-emerald-500', isCollection: false },
+            { method: 'POST', label: 'POST', color: 'text-amber-500', isCollection: true },
+            { method: 'PUT', label: 'PUT', color: 'text-blue-500', isCollection: false },
+            { method: 'DELETE', label: 'DELETE', color: 'text-rose-500', isCollection: false }
+        ];
+
+        // Sidebar Generator
+        const sidebar = document.getElementById('sidebarNav');
+        models.forEach(model => {
+            const block = document.createElement('div');
+            block.innerHTML = `<h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2 capitalize">${model}</h4>`;
+
+            const ul = document.createElement('ul');
+            ul.className = 'space-y-1.5';
+
+            methods.forEach(m => {
+                const li = document.createElement('li');
+                const p = m.isCollection ? '' : '/{id}';
+                const url = `http://localhost:3000/api/${model}${p}`;
+
+                li.innerHTML = `
+                    <button class="flex items-center w-full text-left px-2 py-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-white/10 transition-colors group" onclick="setEndpoint('${m.method}', '${url}')" title="${url}">
+                        <span class="text-[10px] font-bold w-12 shrink-0 ${m.color}">${m.method}${m.isCollection ? '' : ' (id)'}</span>
+                        <span class="text-[11px] text-slate-600 dark:text-slate-400 font-mono truncate">${url}</span>
+                    </button>
+                `;
+                ul.appendChild(li);
+            });
+            block.appendChild(ul);
+            sidebar.appendChild(block);
+        });
+
+        window.setEndpoint = (method, url) => {
+            document.getElementById('apiMethod').value = method;
+            document.getElementById('apiUrl').value = url;
+
+            // Auto format method colors
+            updateMethodColor(method);
+
+            // Suggest dummy bodies for POST/PUT
+            if (method === 'POST' || method === 'PUT') {
+                document.querySelector('[data-target="body"]').click();
+                document.getElementById('apiBody').value = '{\n  \n}';
+            } else {
+                document.getElementById('apiBody').value = '';
+            }
+        };
+
+        const updateMethodColor = (val) => {
+            const el = document.getElementById('apiMethod');
+            el.className = el.className.replace(/text-(emerald|amber|blue|rose|slate|white)-500/g, '');
+            if (val === 'GET') el.classList.add('text-emerald-500');
+            else if (val === 'POST') el.classList.add('text-amber-500');
+            else if (val === 'PUT') el.classList.add('text-blue-500');
+            else if (val === 'DELETE') el.classList.add('text-rose-500');
+        };
+
+        document.getElementById('apiMethod').addEventListener('change', (e) => updateMethodColor(e.target.value));
+        updateMethodColor('GET');
+
+        // Form Submission
+        document.getElementById('apiForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const method = document.getElementById('apiMethod').value;
+            let url = document.getElementById('apiUrl').value;
+            const headersRaw = document.getElementById('apiHeaders').value;
+            const bodyRaw = document.getElementById('apiBody').value;
+
+            const reqOptions = { method, headers: {} };
+
+            // Format URL properly if {id} is left
+            if (url.includes('{id}')) {
+                Swal.fire({ title: 'Falta el ID', text: 'Por favor, sustituye temporalmente la palabra {id} por un ID real en la barra de direcciones de arriba para probar este endpoint.', icon: 'info', background: document.documentElement.classList.contains('dark') ? '#18181b' : '#fff', color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a' });
+                return;
+            }
+
+            try {
+                if (headersRaw.trim()) {
+                    reqOptions.headers = JSON.parse(headersRaw);
+                }
+            } catch (err) {
+                Swal.fire({ title: 'Error Headers', text: 'JSON de Headers es inválido.', icon: 'error', background: document.documentElement.classList.contains('dark') ? '#18181b' : '#fff', color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a' });
+                return;
+            }
+
+            if (method !== 'GET' && method !== 'HEAD' && bodyRaw.trim()) {
+                try {
+                    reqOptions.body = JSON.stringify(JSON.parse(bodyRaw));
+                } catch (err) {
+                    Swal.fire({ title: 'Error Body', text: 'JSON de Body es inválido.', icon: 'error', background: document.documentElement.classList.contains('dark') ? '#18181b' : '#fff', color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a' });
+                    return;
+                }
+            }
+
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            const start = performance.now();
+
+            try {
+                const res = await fetch(url, reqOptions);
+                const end = performance.now();
+
+                const data = await res.text();
+                let parsed;
+                try {
+                    parsed = JSON.parse(data);
+                } catch (e) {
+                    parsed = data;
+                }
+
+                renderResponse(res.status, res.statusText, end - start, parsed);
+
+            } catch (error) {
+                const end = performance.now();
+                renderResponse('ERR', error.message, end - start, null);
+            }
+        });
+
+        const renderResponse = (status, statusText, timeMs, data) => {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+
+            const statusEl = document.getElementById('resStatus');
+            statusEl.innerText = `${status} ${statusText}`;
+            statusEl.className = 'font-bold px-1.5 py-0.5 rounded ml-1 ';
+
+            if (status >= 200 && status < 300) statusEl.className += 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400';
+            else if (status >= 400 && status < 500) statusEl.className += 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400';
+            else statusEl.className += 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400';
+
+            document.getElementById('resTime').innerText = `${timeMs.toFixed(0)} ms`;
+
+            const codeBlock = document.getElementById('resBody');
+            codeBlock.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : String(data);
+
+            // Re-highlight
+            codeBlock.removeAttribute('data-highlighted');
+            hljs.highlightElement(codeBlock);
+        }
+
+        // Initial highlight
+        hljs.highlightAll();
+
+        // Auto-resize textareas
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].addEventListener("input", OnInput, false);
+        }
+        function OnInput() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        }
+
+    </script>
+</body>
+
+</html>
