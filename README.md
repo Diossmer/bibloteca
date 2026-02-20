@@ -36,7 +36,7 @@ Sigue estos pasos para levantar el sistema en tu entorno local.
 
 ---
 
-## 🏛️ Arquitectura y Metodología
+## 🏛️ Arquitectura
 
 ### 1. Estructura de Directorios (Desktop Structure)
 ```text
