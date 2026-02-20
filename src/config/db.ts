@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 process.loadEnvFile()
 
+/** Inicializa la conexión con MongoDB Atlas utilizando las credenciales del entorno. */
 const conectarDB = async () => {
     try {
         // Accedemos directamente a process.env
@@ -22,4 +23,5 @@ const conectarDB = async () => {
     }
 };
 
+/** Punto de anclaje para iniciar la persistencia de datos al arrancar el servidor. */
 export default conectarDB;

@@ -1,3 +1,4 @@
+/** Diccionario maestro que define la configuración visual y estructural de cada modelo en el sistema. */
 export const MODELS_CONFIG = {
     libros: {
         title: 'Catálogo de Libros',

@@ -1,3 +1,4 @@
+/** Inicializa y gestiona el motor de temas (Dark/Light) persistiendo la preferencia en localStorage. */
 export function initTheme() {
     const themeBtn = document.getElementById('themeToggleBtn');
     const lightIcon = document.getElementById('themeToggleLightIcon');

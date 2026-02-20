@@ -4,6 +4,7 @@ import { fetchRecords, saveRecord, removeRecord } from './api.js';
 
 const q = id => document.getElementById(id);
 
+/** Convierte una cadena de fecha en un formato ISO compatible con los inputs de tipo date. */
 export const formatDateForInput = (dateString) => {
     if (!dateString) return '';
     try {
@@ -13,6 +14,7 @@ export const formatDateForInput = (dateString) => {
     } catch (e) { return ''; }
 };
 
+/** Filtra la lista de datos en tiempo real basándose en la entrada de búsqueda del usuario. */
 export const filterData = () => {
     const query = q('searchInput').value.toLowerCase();
     const config = MODELS_CONFIG[state.currentModel].fields;
@@ -25,6 +27,7 @@ export const filterData = () => {
     renderDataList(filtered);
 };
 
+/** Controla la visibilidad de los indicadores de carga tanto en formularios como en tablas. */
 export const setLoader = (type, show) => {
     const el = type === 'form' ? q('formLoader') : q('tableLoader');
     if (el) show ? el.classList.remove('hidden') : el.classList.add('hidden');
@@ -40,6 +43,7 @@ export const setLoader = (type, show) => {
     }
 };
 
+/** Orquesta el cambio de pestaña, actualizando la configuración del formulario y recargando datos. */
 export const changeTab = async (modelName) => {
     state.currentModel = modelName;
     const config = MODELS_CONFIG[modelName];
@@ -65,6 +69,7 @@ export const changeTab = async (modelName) => {
     await loadData();
 };
 
+/** Construye dinámicamente los campos del formulario según la configuración del modelo activo. */
 export const renderFormFields = async (fields) => {
     const container = q('dynamicFieldsContainer');
     container.innerHTML = '';
@@ -114,6 +119,7 @@ export const renderFormFields = async (fields) => {
     }
 };
 
+/** Carga los registros desde la API y desencadena el renderizado de la lista principal. */
 export const loadData = async () => {
     setLoader('table', true);
     try {
@@ -128,6 +134,7 @@ export const loadData = async () => {
     }
 };
 
+/** Genera y renderiza las tarjetas de datos con soporte para acciones de edición y eliminación. */
 export const renderDataList = (data) => {
     const container = q('dataListContainer');
     container.innerHTML = '';
@@ -187,6 +194,7 @@ export const renderDataList = (data) => {
     });
 };
 
+/** Procesa el envío del formulario, manejando la lógica de creación y actualización de registros. */
 export const handleFormSubmit = async (e) => {
     e.preventDefault();
     setLoader('form', true);
@@ -211,6 +219,7 @@ export const handleFormSubmit = async (e) => {
     }
 };
 
+/** Prepara el formulario para la edición de un registro existente, poblando sus campos. */
 export const editRecord = (id) => {
     const item = state.currentData.find(x => x._id === id);
     if (!item) return;
@@ -239,6 +248,7 @@ export const editRecord = (id) => {
     if (window.innerWidth < 1024) window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
+/** Limpia y restablece el formulario a su estado inicial de "Nuevo Registro". */
 export const resetForm = () => {
     const form = q('crudForm');
     if (form) {
@@ -258,6 +268,7 @@ export const resetForm = () => {
     }
 };
 
+/** Ejecuta el flujo de eliminación con confirmación visual antes de remover permanentemente un registro. */
 export const deleteRecord = async (id) => {
     const result = await Swal.fire({
         title: '¿Estás seguro?',

@@ -6,6 +6,7 @@ import Prestamo from '../models/Prestamo';
 import Usuario from '../models/Usuario';
 
 // Mapa de modelos usando el nombre en plural para coincidir con la URL
+/** Mapa centralizado de modelos que vincula nombres en plural con las clases de Mongoose. */
 const models: { [key: string]: any } = {
     libros: Libro,
     autores: Autor,
@@ -15,6 +16,7 @@ const models: { [key: string]: any } = {
 };
 
 // Middleware para verificar si el modelo existe
+/** Middleware de seguridad que valida la existencia del modelo solicitado antes de procesar la petición. */
 export const validateModel = (req: Request, res: Response, next: Function) => {
     const modelName = String(req.params.modelName);
     if (!models[modelName]) {
@@ -25,6 +27,7 @@ export const validateModel = (req: Request, res: Response, next: Function) => {
 };
 
 // GET /api/:modelName -> Listar todos
+/** Recupera la lista completa de registros del modelo actual, ordenados por fecha de creación descendente. */
 export const getAll = async (req: Request, res: Response) => {
     try {
         const Model = res.locals.ModelClass;
@@ -36,6 +39,7 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 // GET /api/:modelName/:id -> Obtener uno por ID
+/** Obtiene un documento específico por su identificador único dentro del modelo seleccionado. */
 export const getOne = async (req: Request, res: Response) => {
     try {
         const Model = res.locals.ModelClass;
@@ -49,6 +53,7 @@ export const getOne = async (req: Request, res: Response) => {
 };
 
 // POST /api/:modelName -> Crear
+/** Crea y persiste un nuevo registro en la base de datos utilizando los datos del cuerpo de la solicitud. */
 export const create = async (req: Request, res: Response) => {
     try {
         const Model = res.locals.ModelClass;
@@ -63,6 +68,7 @@ export const create = async (req: Request, res: Response) => {
 };
 
 // PUT /api/:modelName/:id -> Actualizar
+/** Actualiza las propiedades de un registro existente basándose en el ID proporcionado. */
 export const update = async (req: Request, res: Response) => {
     try {
         const Model = res.locals.ModelClass;
@@ -79,6 +85,7 @@ export const update = async (req: Request, res: Response) => {
 };
 
 // DELETE /api/:modelName/:id -> Eliminar
+/** Elimina un registro de forma definitiva y ejecuta la lógica de eliminación en cascada para mantener la integridad. */
 export const remove = async (req: Request, res: Response) => {
     try {
         const Model = res.locals.ModelClass;
@@ -87,11 +94,13 @@ export const remove = async (req: Request, res: Response) => {
 
         if (!documentoEliminado) return res.status(404).json({ error: 'Documento no encontrado' });
 
-        // Eliminación en Cascada
+        // Lógica de Eliminación en Cascada: Asegura que al eliminar un libro o usuario, sus préstamos vinculados también se borren.
         const modelName = String(req.params.modelName);
         if (modelName === 'libros') {
+            /** Limpieza automática de préstamos asociados al libro eliminado. */
             await models.prestamos.deleteMany({ libroId: id });
         } else if (modelName === 'usuarios') {
+            /** Limpieza automática de préstamos asociados al usuario eliminado. */
             await models.prestamos.deleteMany({ usuarioId: id });
         }
 

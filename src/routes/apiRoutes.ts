@@ -17,4 +17,5 @@ router.post('/:modelName', create);
 router.put('/:modelName/:id', update);
 router.delete('/:modelName/:id', remove);
 
+/** Exportación del enrutador configurado con todas las directrices de la API REST. */
 export default router;
