@@ -38,8 +38,8 @@ export const MODELS_CONFIG = {
         desc: 'Gestión de salidas y vencimientos del inventario.',
         icon: '📑',
         fields: [
-            { name: 'libroId', label: 'ID del Libro', type: 'text', required: true },
-            { name: 'usuarioId', label: 'ID del Lector', type: 'text', required: true },
+            { name: 'libroId', label: 'Libro', type: 'select', source: 'libros', required: true },
+            { name: 'usuarioId', label: 'Lector', type: 'select', source: 'usuarios', required: true },
             { name: 'fechaPrestamo', label: 'Fecha Emisión', type: 'date', required: true, width: 'half' },
             { name: 'fechaDevolucion', label: 'Vencimiento', type: 'date', required: true, width: 'half' },
             { name: 'estado', label: 'Estado Actual', type: 'text', required: true }

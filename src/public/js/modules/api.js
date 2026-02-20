@@ -1,7 +1,7 @@
 import { state } from './state.js';
 
-export const fetchRecords = async () => {
-    const res = await fetch(`/api/${state.currentModel}`);
+export const fetchRecords = async (modelName = state.currentModel) => {
+    const res = await fetch(`/api/${modelName}`);
     if (!res.ok) throw new Error(await res.text());
     return await res.json();
 };

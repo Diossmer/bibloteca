@@ -61,22 +61,37 @@ export const changeTab = async (modelName) => {
     if (searchInp) searchInp.value = '';
 
     resetForm();
-    renderFormFields(config.fields);
+    await renderFormFields(config.fields);
     await loadData();
 };
 
-export const renderFormFields = (fields) => {
+export const renderFormFields = async (fields) => {
     const container = q('dynamicFieldsContainer');
     container.innerHTML = '';
     let rowDiv = null;
 
-    fields.forEach((field) => {
+    for (const field of fields) {
         const wrapper = document.createElement('div');
         const baseInputStyles = 'w-full bg-slate-50 dark:bg-[#09090b] border border-slate-200 dark:border-[#27272a] px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-slate-400 dark:placeholder-slate-500 rounded-lg shadow-sm';
 
-        let inputHtml = field.type === 'textarea'
-            ? `<textarea name="${field.name}" ${field.required ? 'required' : ''} class="${baseInputStyles} resize-none" rows="3"></textarea>`
-            : `<input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} class="${baseInputStyles}">`;
+        let inputHtml = '';
+        if (field.type === 'textarea') {
+            inputHtml = `<textarea name="${field.name}" ${field.required ? 'required' : ''} class="${baseInputStyles} resize-none" rows="3"></textarea>`;
+        } else if (field.type === 'select') {
+            let optionsHtml = '<option value="">Seleccionar...</option>';
+            try {
+                const data = await fetchRecords(field.source);
+                data.forEach(item => {
+                    const label = item.titulo || item.nombre || item._id;
+                    optionsHtml += `<option value="${item._id}">${label}</option>`;
+                });
+            } catch (err) {
+                console.error(`Error loading options for ${field.name}:`, err);
+            }
+            inputHtml = `<select name="${field.name}" ${field.required ? 'required' : ''} class="${baseInputStyles}">${optionsHtml}</select>`;
+        } else {
+            inputHtml = `<input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} class="${baseInputStyles}">`;
+        }
 
         wrapper.innerHTML = `
             <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 tracking-wide uppercase">${field.label}</label>
@@ -96,7 +111,7 @@ export const renderFormFields = (fields) => {
             container.appendChild(wrapper);
             rowDiv = null;
         }
-    });
+    }
 };
 
 export const loadData = async () => {
