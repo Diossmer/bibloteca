@@ -1,4 +1,4 @@
-# 📚 Sistema de Gestión de Biblioteca (SAVAM)
+# 📚 Sistema de Gestión de Biblioteca
 
 Un ecosistema digital completo diseñado para la administración profesional de bibliotecas, integrando una arquitectura moderna de alto rendimiento con una experiencia de usuario (UX) excepcional.
 
