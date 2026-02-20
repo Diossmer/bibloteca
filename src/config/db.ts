@@ -15,6 +15,7 @@ const conectarDB = async () => {
 
         console.log(`✅ Conexión Nativa Exitosa`);
         console.log(`Base de Datos: ${conn.connection.name}`);
+        console.log(`URL de la Base de Datos: ${conn.connection.name}`);
     } catch (error) {
         console.error('❌ Error de conexión:', error);
         process.exit(1);
