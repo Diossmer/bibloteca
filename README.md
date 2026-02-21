@@ -23,8 +23,15 @@ El sistema está construido sobre un stack de última generación para garantiza
 
 ### 3. Instalación y Ejecución
 Sigue estos pasos en tu terminal:
-
 **Clonar e instalar dependencias**
+```bash
+git clone https://github.com/Diossmer/bibloteca.git
+```
+**Entrar al directorio**
+```bash
+cd bibloteca
+```
+**Instalar dependencias**
 ```bash
 npm install
 ```
@@ -35,6 +42,12 @@ npm run css
 **Iniciar el entorno de desarrollo con hot-reload**
 ```bash
 npm run dev
+```
+
+**Poblar base de datos (Seed)**
+Si deseas llenar la base de datos con datos iniciales (autores, categorías, libros y usuarios):
+```bash
+npm run seed
 ```
 
 ### 4. Acceso al Sistema
@@ -166,6 +179,35 @@ Configuración flexible mediante variables de entorno:
 Este sistema es ideal para intranets o demos técnicas. Para producción a escala global, se recomienda:
 *   Implementar autenticación robusta (JWT).
 *   Añadir capas de Rate Limiting.
+
+---
+
+## VII. Mantenimiento y Gestión de Datos
+
+### 25. Seed de Datos (Semilla)
+El sistema incluye un script automatizado para poblar la base de datos con información de prueba. Esto es útil para demostraciones o para iniciar el desarrollo sin datos manuales.
+*   **Comando**: `npm run seed`
+*   **Ubicación**: [seed.ts](file:///var/www/html/biblioteca-app/src/scripts/seed.ts)
+
+### 26. Backup y Restauración (Resguardos)
+Es fundamental mantener copias de seguridad de la información. El proyecto utiliza herramientas estándar de MongoDB para esta tarea.
+
+**Realizar un Backup (Exportar)**
+Ejecuta este comando para generar un respaldo en la carpeta `./backup/`:
+```bash
+mongodump --db biblioteca --out ./backup/
+```
+
+**Restaurar un Backup (Importar)**
+Para recuperar los datos y **sobrescribir** la base de datos actual con el respaldo:
+```bash
+mongorestore --db biblioteca --drop ./backup/biblioteca/
+```
+
+> [!IMPORTANT]
+> - Asegúrate de estar en la raíz del proyecto al ejecutar el comando.
+> - El flag `--drop` borra las colecciones actuales antes de importar el backup, evitando duplicados.
+> - Los archivos `.bson` y `.metadata.json` generados en la carpeta `backup` son compatibles con cualquier instancia de MongoDB.
 
 ---
 © 2026 - **Biblioteca App** | Gestión Profesional de Bibliotecas Digitales.
