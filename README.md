@@ -71,7 +71,8 @@ Organización modular siguiendo estándares profesionales:
 │   ├── routes/           # Definición de Endpoints de la API
 │   ├── views/            # Templates EJS (Vistas y Partials)
 │   ├── public/           # Scripts JS modulares y CSS compilado
-│   └── assets/           # Archivos fuente (CSS base)
+│   ├── assets/           # Archivos fuente (CSS base)
+│   └── scripts/          # Automatización y Seeds de la base de datos
 ├── backup/               # Resguardos de datos (BSON)
 └── tsconfig.json         # Directrices de compilación de TypeScript
 ```
