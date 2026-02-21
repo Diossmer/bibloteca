@@ -40,7 +40,7 @@ npm install
 npm run css
 ```
 >[!IMPORTANT]
->Antes de iniciar el entorno deberías tener el archivo creado .env el cual está en un archivo .env_example, puede es clonar el archivo y/o quitar la palabra example.
+>Antes de iniciar el entorno deberías tener el archivo creado <b>.env</b> el cual está en un archivo <b>.env_example </b>, puede es clonar el archivo y/o quitar la palabra <b>example</b>.
 
 **Iniciar el entorno de desarrollo con hot-reload**
 ```bash
