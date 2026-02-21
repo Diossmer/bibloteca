@@ -16,12 +16,12 @@ El sistema está construido sobre un stack de última generación para garantiza
 *   **Vistas**: [EJS](https://ejs.co/) (Motor de plantillas dinámicas).
 *   **Estilos**: [Tailwind CSS v4](https://tailwindcss.com/) (Diseño atómico y responsivo).
 
-### 2. Requisitos Previos
+### 2. Requisitos Previos (Linux)
 *   Instalar **Node.js** (v20 o superior).
 *   Disponer de una instancia de **MongoDB** (Local o en la nube).
 *   Terminal con soporte para comandos `npm`.
 
-### 3. Instalación y Ejecución
+### 3. Instalación y Ejecución (Terminal)
 Sigue estos pasos en tu terminal:
 **Clonar e instalar dependencias**
 ```bash
