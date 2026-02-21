@@ -39,6 +39,9 @@ npm install
 ```bash
 npm run css
 ```
+>[!IMPORTANT]
+>Antes de iniciar el entorno deberías tener el archivo creado .env el cual está en un archivo .env_example, puede es clonar el archivo y/o quitar la palabra example.
+
 **Iniciar el entorno de desarrollo con hot-reload**
 ```bash
 npm run dev
@@ -62,19 +65,36 @@ Una vez iniciado el servidor, accede a través de:
 ### 5. Estructura de Directorios (Desktop Structure)
 Organización modular siguiendo estándares profesionales:
 ```text
-.
-├── src/
-│   ├── app.ts            # Configuración de Express y Middlewares
-│   ├── config/           # Conector nativo a MongoDB
-│   ├── controllers/      # Lógica de Negocio y Controladores REST
-│   ├── models/           # Interfaces y Esquemas de Mongoose
-│   ├── routes/           # Definición de Endpoints de la API
-│   ├── views/            # Templates EJS (Vistas y Partials)
-│   ├── public/           # Scripts JS modulares y CSS compilado
-│   ├── assets/           # Archivos fuente (CSS base)
-│   └── scripts/          # Automatización y Seeds de la base de datos
-├── backup/               # Resguardos de datos (BSON)
-└── tsconfig.json         # Directrices de compilación de TypeScript
+biblioteca/
+├── src/                        # Lógica del Sistema
+│ ├── app.ts                    # Punto de Entrada (Configuración Express)
+│ ├── config/                   # Configuración
+│ │ └── db.ts                   # Conector Base de Datos (Mongoose)
+│ ├── models/                   # CAPA DE DATOS (Esquemas de Datos)
+│ │ ├── Libro.ts                # Estructura de Libro
+│ │ ├── Autor.ts                # Estructura de Autor
+│ │ ├── Categoria.ts            # Estructura de Categoría
+│ │ ├── Prestamo.ts             # Estructura de Préstamo
+│ │ └── Usuario.ts              # Estructura de Usuario
+│ ├── controllers/              # CAPA DE LÓGICA (Funcionalidad)
+│ │ ├── apiController.ts        # CRUD Genérico Dinámico
+│ │ └── libroController.ts      # Lógica Específica de Libros
+│ ├── routes/                   # CAPA DE ENRUTAMIENTO (Endpoints)
+│ │ ├── apiRoutes.ts            # Rutas /api/*
+│ │ └── libroRoutes.ts          # Rutas /libros/*
+│ ├── views/                    # CAPA DE PRESENTACIÓN (Servidor)
+│ │ ├── index.ejs               # Vista Principal SPA
+│ │ └── partials/               # Componentes Reutilizables
+│ └── public/                   # CAPA DE CLIENTE (Navegador)
+│ ├── js/                       # Lógica Modular JS
+│ │ ├── main.js                 # Inicializador de la Aplicación
+│ │ └── modules/                # Módulos (api, ui, config, state)
+│ └── css/                      # Estilos Compilados (Tailwind)
+├── scripts/                    # Automatización de la base de datos
+│ │ ├── seed.ts                 # para poblar la DB con datos iniciales
+├── .env                        # cluster, variable de entorno
+├── package.json                # Gestión de Dependencias
+└── tsconfig.json               # Directrices de compilación de TypeScript
 ```
 
 ### 6. Arquitectura Limpia (Clean Architecture)
